@@ -62,7 +62,9 @@ def step_to_motor(motor, step_need, dirtion):
         counter += 1
         time.sleep(waitTime)
 
+
 def test_them_motor():
+    GPIO.setmode(GPIO.BOARD)
     setup_serial()
     motor_M1_Pin = 11
     motor_M1_dir = 12
@@ -70,8 +72,8 @@ def test_them_motor():
     motor_M2_dir = 33
 
     print("Pin setup Test")
-    GPIO.setup(motor_M1_Pin,GPIO.OUT)
-    GPIO.output(motor_M1_Pin,GPIO.LOW)
+    GPIO.setup(motor_M1_Pin, GPIO.OUT)
+    GPIO.output(motor_M1_Pin, GPIO.LOW)
     GPIO.setup(motor_M1_dir, GPIO.OUT)
     GPIO.output(motor_M1_dir, GPIO.LOW)
     GPIO.setup(motor_M2_Pin, GPIO.OUT)
@@ -107,4 +109,4 @@ def test_them_motor():
     print("We done, test Work!!")
 
 
-
+test_them_motor()
