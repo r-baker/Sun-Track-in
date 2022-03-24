@@ -5,7 +5,7 @@ import time
 
 
 def setup_serial():
-    port = serial.Serial("/dev/ttyS0", 9600, timeout=0.1, write_timeout=0.1)
+    port = serial.Serial("/dev/ttyS0", 115200, timeout=0.1, write_timeout=0.1)
     #  port1 = serial.Serial()
     tic = TicSerial(port)
     tic.reset()

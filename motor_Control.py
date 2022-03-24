@@ -3,6 +3,7 @@
 import time
 import RPi.GPIO as GPIO
 from drive_setup import setup_serial
+from SPI_drive_setup import setup_spi
 
 
 def going_to_pos(last_x, last_z, new_x, new_z):
@@ -65,7 +66,8 @@ def step_to_motor(motor, step_need, dirtion):
 
 def test_them_motor():
     GPIO.setmode(GPIO.BOARD)
-    setup_serial()
+    #setup_serial()
+    setup_spi()
     motor_M1_Pin = 11
     motor_M1_dir = 12
     motor_M2_Pin = 32
