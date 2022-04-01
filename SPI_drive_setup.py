@@ -124,3 +124,6 @@ def setup_spi():
     time.sleep(0.1)
     motor_m2.writebytes(ctrl_enable_32)
     time.sleep(0.1)
+
+while True:
+

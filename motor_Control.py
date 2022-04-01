@@ -1,9 +1,11 @@
 #!/usr/bin/python
 
 import time
+from time import sleep
 import RPi.GPIO as GPIO
-from drive_setup import setup_serial
 from SPI_drive_setup import setup_spi
+from ticlib import TicUSB
+from ticlib import *
 
 
 def going_to_pos(last_x, last_z, new_x, new_z):
@@ -66,8 +68,8 @@ def step_to_motor(motor, step_need, dirtion):
 
 def test_them_motor():
     GPIO.setmode(GPIO.BOARD)
-    #setup_serial()
-    setup_spi()
+    # setup_usb()
+    # setup_spi()
     motor_M1_Pin = 11
     motor_M1_dir = 12
     motor_M2_Pin = 32
@@ -111,4 +113,21 @@ def test_them_motor():
     print("We done, test Work!!")
 
 
-test_them_motor()
+def test_motor():
+    tic = TicUSB(product=TIC_36v4, serial_number="00383845")
+
+    tic.halt_and_set_position(0)
+    tic.energize()
+    tic.exit_safe_start()
+
+    positions = [500, 300, 800, 0]
+    for position in positions:
+        tic.set_target_position(position)
+        while tic.get_current_position() != tic.get_target_position():
+            sleep(0.1)
+
+    tic.deenergize()
+    tic.enter_safe_start()
+
+
+test_motor()
