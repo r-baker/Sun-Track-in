@@ -1,116 +1,89 @@
 #!/usr/bin/python
 
 import time
-from time import sleep
-import RPi.GPIO as GPIO
-from SPI_drive_setup import setup_spi
 from ticlib import TicUSB
+import ticlib
 from ticlib import *
 
+step_mode = 1 / 16
 
-def going_to_pos(last_x, last_z, new_x, new_z):
+
+#  x axis  serial_number="00383845"
+#  y axis   serial_number="00383851"
+
+
+def motor_setup(motor_num):
+    motor_num.reset()
+    motor_num.clear_driver_error()
+    motor_num.set_decay_mode(0)
+    motor_num.set_current_limit(3000)
+    motor_num.set_step_mode(2)  # 1/4 step, see wiki for full setup option
+    motor_num.halt_and_set_position(0)
+    motor_num.energize()
+    motor_num.exit_safe_start()
+
+
+def motor_calibration(motor_num, num):
+    center_x = 104
+    center_y = 194
+    if num == 1:
+        pos_to_center = center_y
+    else:
+        pos_to_center = center_x
+
+    motor_num.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
+    # 0 reverse, 1 forward
+    flag_array = motor_num.get_misc_flags()
+    flag = flag_array[1]
+    while flag == 19:
+        time.sleep(0.5)
+        flag_array = motor_num.get_misc_flags()
+        flag = flag_array[1]
+    # unsertaing flag is 19
+    position_center = distance_travel_to_motor_position(pos_to_center, motor_num)
+    motor_position(motor_num, position_center)
+
+
+def motor_position(motor_num, target_position):
+    motor_num.set_target_position(target_position)
+    while motor_num.get_current_position() != motor_num.get_target_position():
+        time.sleep(0.1)
+
+    # motor_num.deenergize()
+    # motor_num.enter_safe_start()
+
+
+def pos_to_distance_travel(last_x, last_z, new_x, new_z):
     distance_x = last_x - new_x
     distance_z = last_z - new_z
     return distance_x, distance_z
 
 
-def pos_to_step(pos_mm):
-    step = int(pos_mm / 0.01)  # un step equivalent a 2mm de mvt, mettre step arrondie
-    if pos_mm > 0:
-        turn_dir = 1
-    else:
-        turn_dir = 0
+def distance_travel_to_motor_position(pos_mm, motor):
+    stepSize = motor.get_step_mode()
+    stepSizeConverted = step_mode_converter(stepSize)
+    # 2mm/revolution, 200 step per revotion for full step, in mm 2 point passe the decimal point
+    pos_motor = pos_mm * ((200 / stepSizeConverted) * 0.5)
 
-    return step, turn_dir
-
-
-def do_a_step(pin_to_step):
-    stepTime = 5 / float(1000)
-    GPIO.output(pin_to_step, GPIO.HIGH)
-    time.sleep(stepTime)
-    GPIO.output(pin_to_step, GPIO.LOW)
-    time.sleep(stepTime)
+    return pos_motor
 
 
-def set_direction(pin_to_dir, dir):
-    dirTime = 3 / float(1000)
-    time.sleep(dirTime)
-    GPIO.output(pin_to_dir, dir)
-    time.sleep(dirTime)
-
-
-def step_to_motor(motor, step_need, dirtion):
-    GPIO.setmode(GPIO.BOARD)  # BCM GPIO reference, go GPIO.BOARD for physical pin
-
-    if motor == 1:  # drive M1
-        stepPins = 11
-        dirPins = 12
-    else:  # drive M2
-        stepPins = 32
-        dirPins = 33
-
-    print("Setup pins")
-    GPIO.setup(stepPins, GPIO.OUT)
-    GPIO.output(stepPins, GPIO.LOW)
-    GPIO.setup(dirPins, GPIO.OUT)
-    GPIO.output(dirPins, GPIO.LOW)
-
-    waitTime = 20 / float(1000)
-
-    counter = 0
-    set_direction(dirPins, dirtion)
-    while counter < step_need:
-        print(counter)
-        do_a_step(stepPins)
-        counter += 1
-        time.sleep(waitTime)
-
-
-def test_them_motor():
-    GPIO.setmode(GPIO.BOARD)
-    # setup_usb()
-    # setup_spi()
-    motor_M1_Pin = 11
-    motor_M1_dir = 12
-    motor_M2_Pin = 32
-    motor_M2_dir = 33
-
-    print("Pin setup Test")
-    GPIO.setup(motor_M1_Pin, GPIO.OUT)
-    GPIO.output(motor_M1_Pin, GPIO.LOW)
-    GPIO.setup(motor_M1_dir, GPIO.OUT)
-    GPIO.output(motor_M1_dir, GPIO.LOW)
-    GPIO.setup(motor_M2_Pin, GPIO.OUT)
-    GPIO.output(motor_M2_Pin, GPIO.LOW)
-    GPIO.setup(motor_M2_dir, GPIO.OUT)
-    GPIO.output(motor_M2_dir, GPIO.LOW)
-
-    count = 0
-    while count < 4:
-        set_direction(motor_M1_dir, 0)
-        m11 = 0
-        m10 = 0
-        m21 = 0
-        m20 = 0
-        while m11 < 3:
-            do_a_step(motor_M1_Pin)
-            m11 += 1
-        set_direction(motor_M1_dir, 1)
-        while m10 < 3:
-            do_a_step(motor_M1_Pin)
-            m10 += 1
-        set_direction(motor_M2_dir, 0)
-        while m21 < 3:
-            do_a_step(motor_M1_Pin)
-            m21 += 1
-        set_direction(motor_M1_dir, 1)
-        while m20 < 3:
-            do_a_step(motor_M1_Pin)
-            m20 += 1
-        set_direction(motor_M2_dir, 0)
-        print("loop numero:", count)
-        count += 1
-    print("We done, test Work!!")
+def calibration_test():  # to be tested
+    center_x = 104
+    center_y = 194
+    tic = TicUSB(product=TIC_36v4, serial_number="00383845")
+    tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
+    # 0 reverse, 1 forward
+    flag_array = tic.get_misc_flags()
+    flag = flag_array[1]
+    while flag == 19:
+        time.sleep(0.5)
+        flag_array = tic.get_misc_flags()
+        flag = flag_array[1]
+    # unsertaing flag is 19
+    position_center_y = distance_travel_to_motor_position(center_y, tic)
+    motor_position(tic, position_center_y)
+    tic.halt_and_set_position(0)
 
 
 def test_motor():
@@ -124,10 +97,34 @@ def test_motor():
     for position in positions:
         tic.set_target_position(position)
         while tic.get_current_position() != tic.get_target_position():
-            sleep(0.1)
+            time.sleep(0.1)
 
     tic.deenergize()
     tic.enter_safe_start()
+
+
+def step_mode_converter(step):
+    if step == 0:
+        step_mode_converted = 1  # full step
+    elif step == 1:
+        step_mode_converted = 0.5  # 1/2 step
+    elif step == 2:
+        step_mode_converted = 0.25  # 1/4 step
+    elif step == 3:
+        step_mode_converted = 0.125  # 1/8 step
+    elif step == 4:
+        step_mode_converted = 0.0625  # 1/16 step
+    elif step == 5:
+        step_mode_converted = 0.03125  # 1/32 step
+    elif step == 6:
+        step_mode_converted = 0.015625  # 1/64 step
+    elif step == 7:
+        step_mode_converted = 0.0078125  # 1/128 step
+    elif step == 8:
+        step_mode_converted = 0.00390625  # 1/256 step
+    elif step == 9:
+        step_mode_converted = 0.001953125  # 1/512 step
+    return step_mode_converted
 
 
 test_motor()
