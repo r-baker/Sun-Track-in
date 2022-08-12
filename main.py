@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import datetime
+from datetime import datetime
+from datetime import timezone
 import Timed_Position
 import motor_Control
 import Adjusted_Position
@@ -26,8 +28,8 @@ def track_the_sun():
     charge_active = kp184.Kunkin_KP184()
     motor_1 = TicUSB(product=TIC_36v4, serial_number=motor_1_drive_serial_num)
     motor_2 = TicUSB(product=TIC_36v4, serial_number=motor_2_drive_serial_num)
-    motor_Control.motor_setup(motor_1)  # setup the motor
-    motor_Control.motor_setup(motor_2)
+    # motor_Control.motor_setup(motor_1)  # setup the motor
+    # motor_Control.motor_setup(motor_2)
     # calibration comme here
     present_mode = "Calibration"
     motor_Control.motor_calibration(motor_1, 1)
@@ -35,8 +37,8 @@ def track_the_sun():
     pos_x_now = 0
     pos_y_now = 0
     while True:
-        temperature, humiditer = DHT11.humidy_and_temp_sensor()
-        today_now = datetime.now(datetime.timezone.utc)  # get time of day
+        # temperature, humiditer = DHT11.humidy_and_temp_sensor() # temporary disable
+        today_now = datetime.utcnow() # get time of day
         minute_now = int(today_now.strftime("%M"))
         # check altitude for the sun for nighttime
         if minute_now == 00 or minute_now % 5 == 0:
@@ -69,6 +71,8 @@ def track_the_sun():
         amperage = charge_active.get_I_measure()
         inclinaison = 0
         cap_courant = 0
+        temperature = 0 #temporaire
+        humiditer = 0 #temporaire
         position_motor_1 = motor_1.get_current_position()
         position_motor_2 = motor_2.get_current_position()
         Data_collection.log_data(wattage, amperage, temperature, humiditer, inclinaison

@@ -26,15 +26,15 @@ def motor_calibration(motor_num, num):
     center_x = 140
     center_y = 59
     if num == 1:
-        pos_to_center = center_y
-    else:
         pos_to_center = center_x
+    else:
+        pos_to_center = center_y
 
     motor_num.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
     # 0 reverse, 1 forward
     encoder_motor = motor_num.get_encoder_position()
     time.sleep(0.2)
-    print('going in the loopy loop')
+
     while encoder_motor == 0:
         time.sleep(2)
         encoder_motor = motor_num.get_encoder_position()

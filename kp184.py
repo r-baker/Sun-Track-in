@@ -7,7 +7,7 @@
 # Get list of Your serial devices:
 # $ python -m serial.tools.list_ports -v
 # "LOCATION" field is physical usb port.
-MY_DEVICE = "1-2"
+MY_DEVICE = "/dev/ttyUSB0"
 
 # Internal serial port in windows:
 # MY_DEVICE = "COM1"

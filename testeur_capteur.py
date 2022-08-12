@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-import DHT11
-import kp184
+#import DHT11
+#import kp184
 import time
+import datetime
 
 
 def testing_capteur():
@@ -20,6 +21,12 @@ def test_charge_active():
     print('wattage est : ', wattage)
     print('Courant est : ', amperage)
 
+def test_utc_time():
+    current_utc_time = datetime.datetime.utcnow()
+    print(current_utc_time)
+
 
 # testing_capteur()
-test_charge_active()
+# test_charge_active()
+
+test_utc_time()
