@@ -47,7 +47,7 @@ def track_the_sun():
             pos_x_now = pos_x
             pos_y_now = pos_y
             mm_x_inv = mm_x * (-1)
-            pos_motor_x = motor_Control.distance_travel_to_motor_position(mm_x_inv)
+            pos_motor_x = motor_Control.distance_travel_to_motor_position(mm_x)
             pos_motor_y = motor_Control.distance_travel_to_motor_position(mm_y)
             motor_Control.motor_position(motor_1, pos_motor_x)
             motor_Control.motor_position(motor_2, pos_motor_y)

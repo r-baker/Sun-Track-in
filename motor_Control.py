@@ -23,8 +23,8 @@ def motor_setup(motor_num):
 
 
 def motor_calibration(motor_num, num):
-    center_x = 104
-    center_y = 194
+    center_x = 140
+    center_y = 59
     if num == 1:
         pos_to_center = center_y
     else:
@@ -32,15 +32,17 @@ def motor_calibration(motor_num, num):
 
     motor_num.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
     # 0 reverse, 1 forward
-    flag_array = motor_num.get_misc_flags()
-    flag = flag_array[1]
-    while flag == 19:
-        time.sleep(0.5)
-        flag_array = motor_num.get_misc_flags()
-        flag = flag_array[1]
-    # unsertaing flag is 19
+    encoder_motor = motor_num.get_encoder_position()
+    time.sleep(0.2)
+    print('going in the loopy loop')
+    while encoder_motor == 0:
+        time.sleep(2)
+        encoder_motor = motor_num.get_encoder_position()
+    motor_num.halt_and_set_position(0)
+
     position_center = distance_travel_to_motor_position(pos_to_center, motor_num)
     motor_position(motor_num, position_center)
+    motor_num.halt_and_set_position(0)
 
 
 def motor_position(motor_num, target_position):
@@ -62,45 +64,30 @@ def distance_travel_to_motor_position(pos_mm, motor):
     stepSize = motor.get_step_mode()
     stepSizeConverted = step_mode_converter(stepSize)
     # 2mm/revolution, 200 step per revotion for full step, in mm 2 point passe the decimal point
-    pos_motor = pos_mm * ((200 / stepSizeConverted) * 0.5)
+    # pos_motor = pos_mm * ((200 / stepSizeConverted) * 0.5)
+    pos_motor = (pos_mm/2) * 100
 
     return int(pos_motor)
 
 
 def calibration_test():  # to be tested
-    center_x = 104
-    center_y = 194
+    print('going in calibration')
+    center_x = 140
+    center_y = 59
     tic = TicUSB(product=TIC_36v4, serial_number="00383851")
+    print('starting homing')
     tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
+    print('homing started')
     # 0 reverse, 1 forward
-    flag_array = tic.get_misc_flags()
-    print(type(flag_array))
-    flag = flag_array[1]
-    while flag == 19:
-        time.sleep(0.5)
-        flag_array = tic.get_misc_flags()
-        flag = flag_array[1]
+    encoder_motor = tic.get_encoder_position()
+    time.sleep(0.2)
+    print('going in the loopy loop')
+    while encoder_motor == 0:
+        time.sleep(2)
+        encoder_motor = tic.get_encoder_position()
+
+    print('out of loop')
     # unsertaing flag is 19
-    position_center_y = distance_travel_to_motor_position(center_y, tic)
-    motor_position(tic, position_center_y)
-    tic.halt_and_set_position(0)
-
-
-def homing_test():
-    center_x = 104
-    center_y = 194
-    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
-    tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
-    # 0 reverse, 1 forward
-    flag_array = tic.get_misc_flags()
-    print(flag_array)
-    print(type(flag_array))
-    # flag = flag_array[1]
-
-
-def back_to_center_test():
-    center_y = 194
-    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
     position_center_y = distance_travel_to_motor_position(center_y, tic)
     motor_position(tic, position_center_y)
     tic.halt_and_set_position(0)
