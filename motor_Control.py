@@ -1,11 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import time
 from ticlib import TicUSB
 import ticlib
 from ticlib import *
 
-step_mode = 1 / 16
 
 
 #  x axis  serial_number="00383845"
@@ -65,22 +64,43 @@ def distance_travel_to_motor_position(pos_mm, motor):
     # 2mm/revolution, 200 step per revotion for full step, in mm 2 point passe the decimal point
     pos_motor = pos_mm * ((200 / stepSizeConverted) * 0.5)
 
-    return pos_motor
+    return int(pos_motor)
 
 
 def calibration_test():  # to be tested
     center_x = 104
     center_y = 194
-    tic = TicUSB(product=TIC_36v4, serial_number="00383845")
+    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
     tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
     # 0 reverse, 1 forward
     flag_array = tic.get_misc_flags()
+    print(type(flag_array))
     flag = flag_array[1]
     while flag == 19:
         time.sleep(0.5)
         flag_array = tic.get_misc_flags()
         flag = flag_array[1]
     # unsertaing flag is 19
+    position_center_y = distance_travel_to_motor_position(center_y, tic)
+    motor_position(tic, position_center_y)
+    tic.halt_and_set_position(0)
+
+
+def homing_test():
+    center_x = 104
+    center_y = 194
+    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
+    tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
+    # 0 reverse, 1 forward
+    flag_array = tic.get_misc_flags()
+    print(flag_array)
+    print(type(flag_array))
+    # flag = flag_array[1]
+
+
+def back_to_center_test():
+    center_y = 194
+    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
     position_center_y = distance_travel_to_motor_position(center_y, tic)
     motor_position(tic, position_center_y)
     tic.halt_and_set_position(0)
@@ -126,5 +146,4 @@ def step_mode_converter(step):
         step_mode_converted = 0.001953125  # 1/512 step
     return step_mode_converted
 
-
-test_motor()
+#  test_motor()

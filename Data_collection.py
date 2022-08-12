@@ -1,4 +1,5 @@
-# this will collect data and build daily log
+#!/usr/bin/python3
+
 import csv
 import time
 import os.path

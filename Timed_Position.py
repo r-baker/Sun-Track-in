@@ -1,4 +1,4 @@
-# time position set position need per time of day as pers Reference DATA
+#!/usr/bin/python3
 
 # Altitude: FLOAT
 # Azimut: FLOAT

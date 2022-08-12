@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import datetime
 import Timed_Position
 import motor_Control
@@ -16,8 +18,8 @@ DO: each minute, will check time to see if it use preset sun position(15min) or 
 RETURN: none
 """
 
-motor_1_drive_serial_num = "00383845"
-motor_2_drive_serial_num = "00383851"
+motor_1_drive_serial_num = "00383845"  # x axis
+motor_2_drive_serial_num = "00383851"  # y axis
 
 
 def track_the_sun():

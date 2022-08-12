@@ -1,5 +1,5 @@
+#!/usr/bin/python3
 # -*- coding:utf-8 -*-
-
 '''!
   # @file demo_get_sensor_data.py
   # @brief Get the sensor's gyroscope, accelerometer and onboard temperature.
@@ -43,31 +43,32 @@ import xlsxwriter
 
 workbook = xlsxwriter.Workbook('case3.xlsx')
 worksheet = workbook.add_worksheet()
-worksheet.write('A1','Accel X')
-worksheet.write('B1','Accel Y')
-worksheet.write('C1','Accel Z')
-worksheet.write('D1','Gyro X')
-worksheet.write('E1','Gyro Y')
-worksheet.write('F1','Gyro Z')
+worksheet.write('A1', 'Accel X')
+worksheet.write('B1', 'Accel Y')
+worksheet.write('C1', 'Accel Z')
+worksheet.write('D1', 'Gyro X')
+worksheet.write('E1', 'Gyro Y')
+worksheet.write('F1', 'Gyro Z')
 i = 0
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from DFRobot_ICG20660L import *
+
 '''!
   @brief The constructor of the ICG20660L sensor using IIC communication.
   @param addr:  7-bit IIC address, controlled by SDO pin.
   @n     IIC_ADDR_SDO_H or 0x69:  SDO pull high.(default)
   @n     IIC_ADDR_SDO_L or 0x68:  SDO pull down.
 '''
-icg = DFRobot_ICG20660L_IIC(addr = DFRobot_ICG20660L_IIC.IIC_ADDR_SDO_H)
+icg = DFRobot_ICG20660L_IIC(addr=DFRobot_ICG20660L_IIC.IIC_ADDR_SDO_H)
 '''!
   @brief The constructor of the ICG20660L sensor using SPI communication.
   @param cs:  SPI chip select pin, connected to IO pin of raspberry pi.
 '''
-#icg = DFRobot_ICG20660L_SPI(cs = 22)
+# icg = DFRobot_ICG20660L_SPI(cs = 22)
 
 if __name__ == "__main__":
-  '''!
+    '''!
     @brief Initialize the sensor. After initialization, all sensors are turned off, and the corresponding configuration needs to be turned on through enableSensor.
     @param mode: Configure to read sensor data from FIFO or register?
     @n     eREG_MODE :   Read sensor data from data register.
@@ -79,12 +80,12 @@ if __name__ == "__main__":
     @n      -1: Interface initialization failed(IIC or SPI).
     @n      -2: Failed to read the device ID, the ID is not 0x91
   '''
-  while icg.begin(icg.eREG_MODE) != 0:
-    print("Initialization 6-axis sensor failed.")
-    time.sleep(1)
-  print("Initialization 6-axis sensor sucess.")
-  print("ICG20660L Device ID: %#x"%icg.read_id())
-  '''!
+    while icg.begin(icg.eREG_MODE) != 0:
+        print("Initialization 6-axis sensor failed.")
+        time.sleep(1)
+    print("Initialization 6-axis sensor sucess.")
+    print("ICG20660L Device ID: %#x" % icg.read_id())
+    '''!
     @brief Enable sensor, including Accel of xyz axis, Gyro of xyz, temperature and fifo low power enable bit. 
     @param bit: 8-bit byte data. Each bit represents enabling a function bit, as shown in the following table:
     @n -------------------------------------------------------------------------------------------------------------------
@@ -113,10 +114,10 @@ if __name__ == "__main__":
     @n   eACCEL_AXIS_XYZ or eACCEL_AXIS_X|eACCEL_AXIS_Y|eACCEL_AXIS_Z: The bit3/bit4/bit5 of the bit, enable Accel's xyz axis.
     @n   eAXIS_ALL or eGYRO_AXIS_Z|eGYRO_AXIS_Y|eGYRO_AXIS_X|eACCEL_AXIS_Z|eACCEL_AXIS_Y|eACCEL_AXIS_Z: The bit0/bit1/bit2/bit3/bit4/bit5 of the bit, enable temperature, Accel's and gyro's xyz axis. 
   '''
-  icg.enable_sensor(bit = icg.eAXIS_ALL)
-  #icg.enable_sensor(bit = icg.eGYRO_AXIS_XYZ | icg.eACCEL_AXIS_XYZ)
-  #icg.enable_sensor(bit = icg.eGYRO_AXIS_Z|icg.eGYRO_AXIS_Y|icg.eGYRO_AXIS_X|icg.eACCEL_AXIS_Z|icg.eACCEL_AXIS_Y|icg.eACCEL_AXIS_Z)
-  '''!
+    icg.enable_sensor(bit=icg.eAXIS_ALL)
+    # icg.enable_sensor(bit = icg.eGYRO_AXIS_XYZ | icg.eACCEL_AXIS_XYZ)
+    # icg.enable_sensor(bit = icg.eGYRO_AXIS_Z|icg.eGYRO_AXIS_Y|icg.eGYRO_AXIS_X|icg.eACCEL_AXIS_Z|icg.eACCEL_AXIS_Y|icg.eACCEL_AXIS_Z)
+    '''!
     @brief Config of gyro's full scale, dlpf bandwidth and internal sample rate. 
     @param scale  The full scale of gyro, unit: dps(Degrees per second).
     @n     eFSR_G_125DPS:  The full scale range is ±125 dps.
@@ -132,8 +133,8 @@ if __name__ == "__main__":
     @note When the gyroscope and accelerometer are both enabled, if the sensor data is read through the FIFO, 
     @n the internal sampling rate of the gyroscope and accelerometer must be the same.
   '''
-  icg.config_gyro(scale = icg.eFSR_G_500DPS, bd = icg.eGYRO_DLPF_176_1KHZ)
-  '''!
+    icg.config_gyro(scale=icg.eFSR_G_500DPS, bd=icg.eGYRO_DLPF_176_1KHZ)
+    '''!
     @brief Config of accel's full scale, dlpf bandwidth and internal sample rate. 
     @param scale  The full scale of accel, unit: g(1g = 9.80665 m/s²).
     @n     eFSR_A_2G:  The full scale range is ±2g.
@@ -161,8 +162,8 @@ if __name__ == "__main__":
     @n     True:          Enter low power mode.
     @n     False:         Not configure the Acceleration to low power mode.(default)
   '''
-  icg.config_accel(scale = icg.eFSR_A_16G, bd = icg.eACCEL_DLPF_218_1KHZ)
-  '''!
+    icg.config_accel(scale=icg.eFSR_A_16G, bd=icg.eACCEL_DLPF_218_1KHZ)
+    '''!
     @brief Set sample rate divider. 
     @param div  Sample rate divider, the range is 0~255.
     @n    Sampling rate = internal sampling rate/(div+1)
@@ -182,30 +183,31 @@ if __name__ == "__main__":
     @n |                           |  eODR_500Hz   |    true      |        1       |
     @n |---------------------------------------------------------------------------|
   '''
-  icg.set_sample_div(div = 19)
+    icg.set_sample_div(div=19)
 
-  while i<50:
-    '''
+    while i < 50:
+        '''
       @brief Get Sensor's accel, gyro and temperature data.
       @return Dictionary format: {'accel':{'x':0, 'y':0, 'z':0}, 'gyro':{'x':0, 'y':0, 'z':0}, 'temp':0.0}
     '''
-    sensor = icg.get_sensor_data()
-    #print(sensor)
-    print("Accel:  x: %.3f g,  y: %.3f g,  z:%.3f g"%(sensor['accel']['x'], sensor['accel']['y'],sensor['accel']['z']))
-    print("Gyro:  x: %.3f dps,  y: %.3f dps,  z:%.3f dps"%(sensor['gyro']['x'], sensor['gyro']['y'],sensor['gyro']['z']))
-    print("Temp:   t: %.3f C"%(sensor['temp']))
-    print(i)
-    print("")
-    i = i + 1
-    worksheet.write(i,0,sensor['accel']['x'])
-    worksheet.write(i,1,sensor['accel']['y'])
-    worksheet.write(i,2,sensor['accel']['z'])
-    
-    worksheet.write(i,3,sensor['gyro']['x'])
-    worksheet.write(i,4,sensor['gyro']['y'])
-    worksheet.write(i,5,sensor['gyro']['z'])    
-    
-    time.sleep(1)
+        sensor = icg.get_sensor_data()
+        # print(sensor)
+        print("Accel:  x: %.3f g,  y: %.3f g,  z:%.3f g" % (
+        sensor['accel']['x'], sensor['accel']['y'], sensor['accel']['z']))
+        print("Gyro:  x: %.3f dps,  y: %.3f dps,  z:%.3f dps" % (
+        sensor['gyro']['x'], sensor['gyro']['y'], sensor['gyro']['z']))
+        print("Temp:   t: %.3f C" % (sensor['temp']))
+        print(i)
+        print("")
+        i = i + 1
+        worksheet.write(i, 0, sensor['accel']['x'])
+        worksheet.write(i, 1, sensor['accel']['y'])
+        worksheet.write(i, 2, sensor['accel']['z'])
+
+        worksheet.write(i, 3, sensor['gyro']['x'])
+        worksheet.write(i, 4, sensor['gyro']['y'])
+        worksheet.write(i, 5, sensor['gyro']['z'])
+
+        time.sleep(1)
 
 workbook.close()
-

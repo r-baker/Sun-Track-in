@@ -1,7 +1,7 @@
-# send adjustement to position en between timed position back to the main
+#!/usr/bin/python3
+
+
 import numpy as np
-
-
 # Power_Enough: BOOL
 
 def MPPT():
