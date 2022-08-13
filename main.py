@@ -53,11 +53,23 @@ def track_the_sun():
             pos_motor_y = motor_Control.distance_travel_to_motor_position(mm_y, motor_2)
             motor_Control.motor_position(motor_1, pos_motor_x)
             motor_Control.motor_position(motor_2, pos_motor_y)
+            # collect de donné
+            wattage = charge_active.get_P_measure()
+            amperage = charge_active.get_I_measure()
+            inclinaison = 0
+            cap_courant = 0
+            temperature = 0  # temporaire
+            humiditer = 0  # temporaire
+            position_motor_1 = motor_1.get_current_position()
+            position_motor_2 = motor_2.get_current_position()
+            Data_collection.log_data(wattage, amperage, temperature, humiditer, inclinaison
+                                     , cap_courant, position_motor_1, position_motor_2, present_mode, today_now)
         else:
-            present_mode = "Ajusted position"
+            mode = "Ajusted position"
             angle_to_search = [0, 45, 90, 135, 180, 225, 270, 315]
-            for rayon in range(1, 3):
+            for rayon in range(1, 4):
                 for angle in angle_to_search:
+                    present_mode = mode + " rayon=" + str(rayon) + " angle=" + str(angle)
                     search_x, search_y = Adjusted_Position.circle_search_pts(rayon, angle)
 
                     search_pos_x = Adjusted_Position.circle_pos(pos_x_now, search_x)
@@ -67,16 +79,16 @@ def track_the_sun():
                     search_pos_y = Adjusted_Position.circle_pos(pos_y_now, search_y)
                     search_motor_y = motor_Control.distance_travel_to_motor_position(search_pos_y, motor_2)
                     motor_Control.motor_position(motor_2, search_motor_y)
-        wattage = charge_active.get_P_measure()
-        amperage = charge_active.get_I_measure()
-        inclinaison = 0
-        cap_courant = 0
-        temperature = 0 #temporaire
-        humiditer = 0 #temporaire
-        position_motor_1 = motor_1.get_current_position()
-        position_motor_2 = motor_2.get_current_position()
-        Data_collection.log_data(wattage, amperage, temperature, humiditer, inclinaison
-                                 , cap_courant, position_motor_1, position_motor_2, present_mode, today_now)
+                    wattage = charge_active.get_P_measure()
+                    amperage = charge_active.get_I_measure()
+                    inclinaison = 0
+                    cap_courant = 0
+                    temperature = 0 #temporaire
+                    humiditer = 0 #temporaire
+                    position_motor_1 = motor_1.get_current_position()
+                    position_motor_2 = motor_2.get_current_position()
+                    Data_collection.log_data(wattage, amperage, temperature, humiditer, inclinaison
+                                             , cap_courant, position_motor_1, position_motor_2, present_mode, today_now)
         time.sleep(60)
 
 

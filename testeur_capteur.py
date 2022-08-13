@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-#import DHT11
-#import kp184
+# import DHT11
+# import kp184
 import time
 import datetime
 
@@ -21,12 +21,21 @@ def test_charge_active():
     print('wattage est : ', wattage)
     print('Courant est : ', amperage)
 
+
 def test_utc_time():
     current_utc_time = datetime.datetime.utcnow()
     print(current_utc_time)
 
 
+def test_ecriture():
+    mode = "Ajusted position"
+    angle_to_search = [0, 45, 90, 135, 180, 225, 270, 315]
+    for rayon in range(1, 4):
+        for angle in angle_to_search:
+            present_mode = mode + " rayon=" + str(rayon) + " angle=" + str(angle)
+            print(present_mode)
+
 # testing_capteur()
 # test_charge_active()
-
-test_utc_time()
+test_ecriture()
+# test_utc_time()
