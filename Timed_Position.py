@@ -17,7 +17,7 @@ RETURN: pos_x, pos_z ; FLOAT
 def time_pos():
     azmut, alt = get_sun_pos()  # retourne azimute et altitude
     pos_y = 93  # verifier comment l'axe va etre calculer dans le futur
-    vec = math.tan(math.radians(90 - alt)) * pos_y  # determine le vecteur longueur
+    vec = math.tan(math.radians(90 - (alt+30))) * pos_y  # determine le vecteur longueur, +30 a etre remplacer par donner de gyro
     angle = 270 - azmut
     pos_x = vec * math.cos(math.radians(angle))  # donne position x en mm
     pos_z = vec * math.sin(math.radians(angle))  # donne position z en mm

@@ -14,7 +14,6 @@ from ticlib import *
 def motor_setup(motor_num):
     motor_num.reset()
     motor_num.clear_driver_error()
-    motor_num.set_decay_mode(0)
     motor_num.set_current_limit(3000)
     motor_num.set_step_mode(2)  # 1/4 step, see wiki for full setup option
     motor_num.halt_and_set_position(0)
