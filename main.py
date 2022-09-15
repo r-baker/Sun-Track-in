@@ -38,7 +38,7 @@ def track_the_sun():
     pos_y_now = 0
     while True:
         # temperature, humiditer = DHT11.humidy_and_temp_sensor() # temporary disable
-        today_now = datetime.utcnow() # get time of day
+        today_now = datetime.utcnow()  # get time of day
         minute_now = int(today_now.strftime("%M"))
         # check altitude for the sun for nighttime
         if minute_now == 00 or minute_now % 5 == 0:
@@ -83,8 +83,8 @@ def track_the_sun():
                     amperage = charge_active.get_I_measure()
                     inclinaison = 0
                     cap_courant = 0
-                    temperature = 0 #temporaire
-                    humiditer = 0 #temporaire
+                    temperature = 0  # temporaire
+                    humiditer = 0  # temporaire
                     position_motor_1 = motor_1.get_current_position()
                     position_motor_2 = motor_2.get_current_position()
                     Data_collection.log_data(wattage, amperage, temperature, humiditer, inclinaison
@@ -92,8 +92,69 @@ def track_the_sun():
         time.sleep(60)
 
 
+def manuel():
+    charge_active = kp184.Kunkin_KP184()
+    motor_1 = TicUSB(product=TIC_36v4, serial_number=motor_1_drive_serial_num)
+    motor_2 = TicUSB(product=TIC_36v4, serial_number=motor_2_drive_serial_num)
+    motor_Control.motor_setup(motor_1)  # setup the motor
+    motor_Control.motor_setup(motor_2)
+    # calibration comme here
+
+    # motor_Control.motor_calibration(motor_1, 1)
+    # motor_Control.motor_calibration(motor_2, 2)
+
+    commande = 0
+
+    while commande != 'p':
+
+        commande = input('Step pls (int, 10 = 1mm env.)')
+        commande2 = 0
+        while commande2 != 'p':
+
+            if commande2 == 'w':
+                print('commande w reçu')
+                motor_1.set_target_position(motor_1.get_current_position() + int(commande))
+
+            elif commande2 == 'a':
+                print('commande a reçu')
+                motor_2.set_target_position(motor_2.get_current_position() - int(commande))
+
+            elif commande2 == 's':
+                print('commande s reçu')
+                motor_1.set_target_position(motor_1.get_current_position() - int(commande))
+
+            elif commande2 == 'd':
+                print('commande d reçu')
+                motor_2.set_target_position(motor_2.get_current_position() + int(commande))
+
+            else:
+                print('...')
+            commande2 = input('Direction pls (WASD)')
+
+    print('Commande non valide, deenergize')
+
+    motor_1.deenergize()
+    # motor_1.safe_start()
+
+    motor_2.deenergize()
+    # motor_2.safe_start()
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    track_the_sun()
+    x = input(" Mode automatique : press 1, mode manuel : press 2 ")
+    if x == '1':
+        track_the_sun()
+    elif x == '2':
+        print('Mode manuel')
+        manuel()
+    else:
+        print('...')
+        motor_1 = TicUSB(product=TIC_36v4, serial_number=motor_1_drive_serial_num)
+        motor_2 = TicUSB(product=TIC_36v4, serial_number=motor_2_drive_serial_num)
+        motor_1.deenergize()
+        # motor_1.safe_start()
 
+        motor_2.deenergize()
+        # motor_2.safe_start()
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
