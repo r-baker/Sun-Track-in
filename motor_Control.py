@@ -6,7 +6,6 @@ import ticlib
 from ticlib import *
 
 
-
 #  x axis  serial_number="00383845"
 #  y axis   serial_number="00383851"
 
@@ -19,6 +18,11 @@ def motor_setup(motor_num):
     motor_num.halt_and_set_position(0)
     motor_num.energize()
     motor_num.exit_safe_start()
+
+
+def both_motor_calibration(motor_x, motor_y):
+    motor_calibration(motor_x, 1)
+    motor_calibration(motor_y, 2)
 
 
 def motor_calibration(motor_num, num):
@@ -46,7 +50,7 @@ def motor_calibration(motor_num, num):
 
 def motor_position(motor_num, target_position):
     motor_num.set_target_position(target_position)
-    while motor_num.get_current_position() != motor_num.get_target_position():
+    while motor_num.get_current_position() != motor_num.get_target_position() and motor_num.get_current_velocity() != 0:
         time.sleep(0.1)
 
     # motor_num.deenergize()
@@ -64,7 +68,7 @@ def distance_travel_to_motor_position(pos_mm, motor):
     stepSizeConverted = step_mode_converter(stepSize)
     # 2mm/revolution, 200 step per revotion for full step, in mm 2 point passe the decimal point
     # pos_motor = pos_mm * ((200 / stepSizeConverted) * 0.5)
-    pos_motor = (pos_mm/2) * 100
+    pos_motor = (pos_mm / 2) * 100
 
     return int(pos_motor)
 
