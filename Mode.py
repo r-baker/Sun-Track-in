@@ -3,6 +3,7 @@
 import datetime
 from datetime import datetime
 from datetime import timezone
+import Reference_Data
 import Timed_Position
 import Motor_Control
 import Adjusted_Position
@@ -48,6 +49,7 @@ def automatic():
     pos_x_now = 0
     pos_y_now = 0
     while True:
+        night_time_mode()
         temperature, humiditer = DHT11.humidy_and_temp_sensor()  # temporary disable
         today_now = datetime.utcnow()  # get time of day
         minute_now = int(today_now.strftime("%M"))
@@ -143,7 +145,7 @@ def manuel():
             elif commande2 == 'u':
                 print('commande u reçu, Retour au centre')
                 Motor_Control.both_motor_calibration(motor_x, motor_y)
-                
+
             else:
                 print('...')
             commande2 = input('Direction (WASD), sauvegarde donner(i), arret (g), retour au choix(c)')
@@ -155,3 +157,9 @@ def manuel():
 
     motor_y.deenergize()
     # motor_2.safe_start()
+
+
+def night_time_mode():
+    altitud = Reference_Data.get_sun_altitude()
+    while altitud < 20.0:
+        time.sleep(0.1)

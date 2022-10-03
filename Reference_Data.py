@@ -8,8 +8,8 @@ from datetime import datetime
 from datetime import timezone
 
 
-latitude = 42.206
-longitude = -71.382
+latitude = 45.377
+longitude = -71.941
 
 
 def get_sun_pos():
@@ -24,6 +24,18 @@ def get_sun_pos():
     #  print("azimuth: ", azimuth)
     #  print("altitude: ", altitude)
     return azimuth, altitude
+
+
+def get_sun_azimuth():
+    date_now = datetime.now(timezone.utc)
+    azimuth = get_azimuth(latitude, longitude, date_now)
+    return azimuth
+
+
+def get_sun_altitude():
+    date_now = datetime.now(timezone.utc)
+    altitude = get_altitude(latitude, longitude, date_now)
+    return altitude
 
 
 def estimated_groud_watt():
