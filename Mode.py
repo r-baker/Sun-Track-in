@@ -67,7 +67,16 @@ def automatic():
             Motor_Control.motor_position(motor_x, pos_motor_x)
             Motor_Control.motor_position(motor_y, pos_motor_y)
             # collect de donné
-            Data_collection.save_data(charge_active, motor_x, motor_y, temperature, humiditer, present_mode, today_now)
+            position_motor_x = motor_x.get_current_position()
+            position_motor_y = motor_y.get_current_position()
+            charge_active.set_load_mode("CW")
+            print("mode de la charge artive presentement: ", charge_active.get_load_mode())
+            charge_active.set_CW_setting(60)
+            print("setting du mode CW: ", charge_active.get_CW_setting())
+            wattage = charge_active.get_P_measure()
+            amperage = charge_active.get_I_measure()
+            Data_collection.save_data(wattage, amperage, position_motor_x, position_motor_y, temperature, humiditer,
+                                      present_mode, today_now)
 
         else:
             mode = "Ajusted position"
@@ -85,8 +94,17 @@ def automatic():
                     search_motor_y = Motor_Control.distance_travel_to_motor_position(search_pos_y, motor_y)
                     Motor_Control.motor_position(motor_y, search_motor_y)
                     # collect de donner
-                    Data_collection.save_data(charge_active, motor_x, motor_y, temperature, humiditer, present_mode,
-                                              today_now)
+                    position_motor_x = motor_x.get_current_position()
+                    position_motor_y = motor_y.get_current_position()
+                    charge_active.set_load_mode("CW")
+                    print("mode de la charge artive presentement: ", charge_active.get_load_mode())
+                    charge_active.set_CW_setting(60)
+                    print("setting du mode CW: ", charge_active.get_CW_setting())
+                    wattage = charge_active.get_P_measure()
+                    amperage = charge_active.get_I_measure()
+                    Data_collection.save_data(wattage, amperage, position_motor_x, position_motor_y, temperature,
+                                              humiditer,
+                                              present_mode, today_now)
 
         time.sleep(60)
 
@@ -131,7 +149,16 @@ def manuel():
 
             elif commande2 == 'i':
                 print('commande d reçu')
-                Data_collection.save_data(charge_active, motor_x, motor_y, temperature, humiditer, present_mode, today_now)
+                position_motor_x = motor_x.get_current_position()
+                position_motor_y = motor_y.get_current_position()
+                charge_active.set_load_mode("CW")
+                print("mode de la charge artive presentement: ", charge_active.get_load_mode())
+                charge_active.set_CW_setting(60)
+                print("setting du mode CW: ", charge_active.get_CW_setting())
+                wattage = charge_active.get_P_measure()
+                amperage = charge_active.get_I_measure()
+                Data_collection.save_data(wattage, amperage, position_motor_x, position_motor_y, temperature, humiditer,
+                                          present_mode, today_now)
 
             elif commande2 == 'g':
                 print('commande g reçu, ARRET DES MOTEUR')

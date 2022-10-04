@@ -3,6 +3,7 @@
 import csv
 import time
 import os.path
+from ticlib import *
 
 
 # temperature: INT
@@ -32,14 +33,14 @@ def log_data(ca_pui, ca_cou, cap_temp, cap_hum, cap_incl, cap_cou, pos_x, pos_y,
             writer.writerow(row)
 
 
-def save_data(charge_act, motor_x, motor_y, temperature, humiditer, present_mode, today_now):
-    wattage = charge_act.get_P_measure()
-    amperage = charge_act.get_I_measure()
+def save_data(wattage, amperage, position_motor_x, position_motor_y, temperature, humiditer, present_mode, today_now):
+    # wattage = charge_act.get_P_measure()
+    # amperage = charge_act.get_I_measure()
     inclinaison = 0
     cap_courant = 0
     # temperature = 0  # temporaire
     # humiditer = 0  # temporaire
-    position_motor_x = motor_x.get_current_position()
-    position_motor_y = motor_y.get_current_position()
+    # position_motor_x = motor_x.get_current_position()
+    # position_motor_y = motor_y.get_current_position()
     log_data(wattage, amperage, temperature, humiditer, inclinaison
              , cap_courant, position_motor_x, position_motor_y, present_mode, today_now)
