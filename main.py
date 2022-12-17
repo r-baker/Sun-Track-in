@@ -15,7 +15,7 @@ from ticlib import *
 import time
 
 """
-track_the_sun() main code to get input on sun location and send motor control
+main() code to get input on sun location and send motor control
 INPUT: none
 DO: each minute, will check time to see if it use preset sun position(15min) or sensor ajustment(1min)
 RETURN: none

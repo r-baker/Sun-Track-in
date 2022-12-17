@@ -18,6 +18,13 @@ motor_x_drive_serial_num = "00383845"  # x axis
 motor_y_drive_serial_num = "00383851"  # y axis
 
 
+
+"""
+mode_selection() this fonction selection if we are working automatique or manual mode
+INPUT: User
+DO: select mode
+RETURN: none
+"""
 def mode_selection():
     x = input(" Mode automatique : press 1, mode manuel : press 2 ")
     if x == '1':
@@ -36,7 +43,12 @@ def mode_selection():
         motor_y.deenergize()
         # motor_2.safe_start()
 
-
+"""
+automatic() this is the automatique mode
+INPUT: datetime and reference_data
+DO: select mode
+RETURN: data to be save with data_collection
+"""
 def automatic():
     charge_active = kp184.Kunkin_KP184()
     motor_x = TicUSB(product=TIC_36v4, serial_number=motor_x_drive_serial_num)
@@ -108,7 +120,12 @@ def automatic():
 
         time.sleep(60)
 
-
+"""
+manuel() mode under user control
+INPUT: user
+DO: Under user control
+RETURN: data to be save with data_collection with user control
+"""
 def manuel():
     charge_active = kp184.Kunkin_KP184()
     present_mode = "Manuel"
@@ -185,7 +202,12 @@ def manuel():
     motor_y.deenergize()
     # motor_2.safe_start()
 
-
+"""
+night_time_mode() 
+INPUT: the sun altitude
+DO: check if the sun is too low in the horizon, put to sleep if so
+RETURN: NONE
+"""
 def night_time_mode():
     altitud = Reference_Data.get_sun_altitude()
     while altitud < 20.0:

@@ -5,9 +5,15 @@ from ticlib import TicUSB
 import ticlib
 from ticlib import *
 
-
 #  x axis  serial_number="00383845"
 #  y axis   serial_number="00383851"
+
+"""
+motor_setup
+INPUT: motor number to setup
+DO: initial setup before motor use
+RETURN: none
+"""
 
 
 def motor_setup(motor_num):
@@ -20,9 +26,25 @@ def motor_setup(motor_num):
     motor_num.exit_safe_start()
 
 
+"""
+both motor calibre
+INPUT: both motor reference
+DO: calibrate both motor to center
+RETURN: none
+"""
+
+
 def both_motor_calibration(motor_x, motor_y):
     motor_calibration(motor_x, 1)
     motor_calibration(motor_y, 2)
+
+
+"""
+motor calibre
+INPUT: motor reference and reference number
+DO: calibrate selected motor to center
+RETURN: none
+"""
 
 
 def motor_calibration(motor_num, num):
@@ -48,13 +70,18 @@ def motor_calibration(motor_num, num):
     motor_num.halt_and_set_position(0)
 
 
+"""
+motor position
+INPUT: motor reference and target position
+DO: send a target position to reach for the motor to go to
+RETURN: none
+"""
+
+
 def motor_position(motor_num, target_position):
     motor_num.set_target_position(target_position)
     while motor_num.get_current_position() != motor_num.get_target_position() and motor_num.get_current_velocity() != 0:
         time.sleep(0.1)
-
-    # motor_num.deenergize()
-    # motor_num.enter_safe_start()
 
 
 def pos_to_distance_travel(last_x, last_z, new_x, new_z):
@@ -71,46 +98,6 @@ def distance_travel_to_motor_position(pos_mm, motor):
     pos_motor = (pos_mm / 2) * 100
 
     return int(pos_motor)
-
-
-def calibration_test():  # to be tested
-    print('going in calibration')
-    center_x = 140
-    center_y = 59
-    tic = TicUSB(product=TIC_36v4, serial_number="00383851")
-    print('starting homing')
-    tic.go_home(0)  # verifier si 0 es vers l'avant ou l'arriere
-    print('homing started')
-    # 0 reverse, 1 forward
-    encoder_motor = tic.get_encoder_position()
-    time.sleep(0.2)
-    print('going in the loopy loop')
-    while encoder_motor == 0:
-        time.sleep(2)
-        encoder_motor = tic.get_encoder_position()
-
-    print('out of loop')
-    # unsertaing flag is 19
-    position_center_y = distance_travel_to_motor_position(center_y, tic)
-    motor_position(tic, position_center_y)
-    tic.halt_and_set_position(0)
-
-
-def test_motor():
-    tic = TicUSB(product=TIC_36v4, serial_number="00383845")
-
-    tic.halt_and_set_position(0)
-    tic.energize()
-    tic.exit_safe_start()
-
-    positions = [500, 300, 800, 0]
-    for position in positions:
-        tic.set_target_position(position)
-        while tic.get_current_position() != tic.get_target_position():
-            time.sleep(0.1)
-
-    tic.deenergize()
-    tic.enter_safe_start()
 
 
 def step_mode_converter(step):
@@ -135,5 +122,3 @@ def step_mode_converter(step):
     elif step == 9:
         step_mode_converted = 0.001953125  # 1/512 step
     return step_mode_converted
-
-#  test_motor()
